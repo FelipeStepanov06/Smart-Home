@@ -9,7 +9,7 @@ function PainelCriacao({ onAbrirCriacao, onScanRede }) {
       {/* Painel onde está a parte de criação e scan da rede */}
       <div className="painel_adicao">
         {/* Título da seção de configuração */}
-        <span className="letra_h1_negrito">Configuração e Adição</span>
+        <span className="letra_h1_negrito ">Configuração e Adição</span>
 
         {/* Grid que organiza os dois botões de ação (Criar Cômodo e Scan) lado a lado */}
         <div className="opcoes_painel">

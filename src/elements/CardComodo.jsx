@@ -7,14 +7,15 @@ function CardComodo({ comodo }) {
   const [painelAberto, setPainelAberto] = useState(false);
 
   return (
-    <div className="cards_comodos">
-      <div className="card_header">
+    <div className="cards_comodos ">
+      <div className="card_header ">
         <span className="letra_h2_negrito">{comodo.nome.toUpperCase()}</span>
       </div>
-      <div className="card_icone">
-        <i className={comodo.classeIcone}></i>
+      <div className="card_icone text-dark">
+        <i className= {comodo.classeIcone} ></i>
       </div>
-      <div className="card_detalhes">
+
+      <div className="card_detalhes link-dark">
         <div className="linha_controle">
           <span className="letra_h3">
             LUZ:
@@ -29,27 +30,22 @@ function CardComodo({ comodo }) {
           </span>
         </div>
 
-        <span className="letra_h3">
-          {" "}
-          AC: <span className="caixa_ac">{temperatura}°C</span>
-        </span>
-
-        <div className="ajustes">
-          <button
-            id="setinha"
-            className="setinha"
-            onClick={() => setPainelAberto(true)}
-          >
-            <i className="fa-solid fa-angle-up setinha_icon"></i>
-          </button>
-
-          <button
-            id="engrenagem"
-            className="engrenagem"
-            onClick={() => setPainelAberto(true)}
-          >
-            <i className="fa-solid fa-gear ajuste"></i>
-          </button>
+        {/* Botões ajustados perfeitamente abaixo do AC */}
+        <div className="d-flex flex-column mt-3">
+          <span className="letra_h3">
+            AC: <span className="caixa_ac">{temperatura}°C</span>
+          </span>
+          <div className="d-flex gap-2 mt-3" style={{ marginLeft: "45px" }}>
+            <button className="setinha" onClick={() => setPainelAberto(true)}>
+              <i className="fa-solid fa-angle-up setinha_icon link-dark"></i>
+            </button>
+            <button
+              className="engrenagem link-dark"
+              onClick={() => setPainelAberto(true)}
+            >
+              <i className="fa-solid fa-gear ajuste"></i>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -61,7 +57,7 @@ function CardComodo({ comodo }) {
               className="btn-fechar"
               onClick={() => setPainelAberto(false)}
             >
-              <i className="fa-solid fa-angle-down seta_baixo"></i>
+              <i className="fa-solid fa-angle-down seta_baixo link-dark"></i>
             </button>
           </div>
           <div className="ajustes-body">
@@ -73,7 +69,6 @@ function CardComodo({ comodo }) {
               value={brilhoLuz}
               onChange={(e) => setBrilhoLuz(Number(e.target.value))}
             />
-
             <label>Ar Condicionado (°C)</label>
             <input
               type="number"
