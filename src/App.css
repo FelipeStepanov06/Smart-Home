@@ -17,6 +17,12 @@
   }
 }
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+body,
+* {
+  font-family: "Inter", sans-serif;
+}
+
 .hero {
   position: relative;
 
@@ -183,10 +189,6 @@
   }
 }
 
-* {
-  font-family: "Inter", sans-serif;
-}
-
 /* Definição de variáveis globais de cores para manter o padrão do layout */
 :root {
   --background_tela: rgba(246, 251, 254, 1);
@@ -211,10 +213,14 @@
 }
 
 .letra_h2_negrito {
-  font-family: Inter;
-  font-size: 28px;
+  font-size: 1.25rem;
   font-weight: bold;
-  margin-left: 300px;
+  color: var(--bs-body-color); /* Muda automaticamente no tema Claro/Escuro */
+  margin: 0;
+  white-space: nowrap; /* Evita quebrar a linha */
+  overflow: hidden; /* Corta o texto que sobrar */
+  text-overflow: ellipsis; /* Adiciona "..." se o nome for grande demais */
+  max-width: 90%;
 }
 
 .letra_h3_negrito {
@@ -549,15 +555,29 @@
   border-radius: 7px;
   box-sizing: border-box;
   overflow: hidden;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--bs-body-bg); /* Respeita modo claro/escuro */
+  border: 1px solid var(--bs-border-color);
+  width: 250px;
+  position: relative;
 }
 
 .card_header {
-  font-size: 25px;
-  padding-left: 15px;
+  width: 100%;
+  min-height: 40px;
+  display: flex;
+  justify-content: center; /* Centraliza o texto na horizontal */
+  align-items: center; /* Centraliza o texto na vertical */
+  border-bottom: 2px solid var(--bs-border-color-translucent); /* Linha sutil */
+  margin-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 .card_icone {
-  padding-top: 25px;
+  padding-top: 10px;
+  margin-left: 15px;
   display: flex;
   align-self: center;
   justify-self: center;
@@ -704,7 +724,7 @@
   width: 100%;
   height: 100%;
   z-index: 10;
-  background-color: #ffffff;
+  background-color: var(--background_comodos);
   padding: 16px;
   box-sizing: border-box;
   display: flex;
@@ -721,10 +741,11 @@
   margin-bottom: 12px;
 }
 
+/* CORRIGIDO: Agora acompanha o tema (var(--bs-body-color)) */
 .ajustes-header h3 {
   margin: 0;
   font-size: 1.1rem;
-  color: #333333;
+  color: var(--bs-body-color);
   font-family: sans-serif;
 }
 
@@ -758,10 +779,11 @@
   flex-grow: 1;
 }
 
+/* CORRIGIDO: Agora acompanha o tema (var(--bs-body-color)) */
 .ajustes-body label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #555555;
+  color: var(--bs-body-color);
   font-family: sans-serif;
   margin-bottom: -4px;
 }
@@ -797,8 +819,4 @@
   text-align: center;
   margin-top: 5px;
   font-family: sans-serif;
-}
-
-.cards_comodos .card_icone i {
-  color: #212529 !important;
 }

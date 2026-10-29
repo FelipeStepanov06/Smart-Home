@@ -1,16 +1,21 @@
 import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
-import ParteSuperior from "./elements/ParteSuperior.jsx";
-import PainelCriacao from "./elements/PainelCriacao.jsx";
-import CriarComodoCard from "./elements/CriarComodoCard.jsx";
-import CardComodo from "./elements/CardComodo.jsx";
+import ParteSuperior from "./elements/ParteSuperior.tsx";
+import PainelCriacao from "./elements/PainelCriacao.tsx";
+import CriarComodoCard from "./elements/CriarComodoCard.tsx";
+import CardComodo from "./elements/CardComodo.tsx";
 import "./App.css";
 
-function TopBar() {
-  const [isDarkMode, setIsDarkMode] = React.useState(false);
+import type { Comodo, Perfil, Configuracao } from "./types.ts";
 
-  const mudarTema = () => {
+// ─── TopBar ──────────────────────────────────────────────────────────────────
+
+function TopBar(): JSX.Element {
+  const [isDarkMode, setIsDarkMode] = React.useState<boolean>(false);
+
+  // Alterna o atributo data-bs-theme no <html> para o Bootstrap reagir ao tema
+  const mudarTema = (): void => {
     const novoModoEscuro = !isDarkMode;
     setIsDarkMode(novoModoEscuro);
     document.documentElement.setAttribute(
@@ -35,13 +40,19 @@ function TopBar() {
   );
 }
 
-function Sidebar({ hasRooms }) {
+// ─── Sidebar ─────────────────────────────────────────────────────────────────
+
+interface SidebarProps {
+  hasRooms: boolean;
+}
+
+function Sidebar({ hasRooms }: SidebarProps): JSX.Element {
   return (
     <div
       className="d-flex flex-column align-items-center position-fixed top-0 start-0 bottom-0 border-end pt-3"
       style={{ width: "90px", zIndex: 1000 }}
     >
-      <a className="text-dark text-decoration-none mb-5 mt-2 d-flex flex-column align-items-center">
+      <a className="text-decoration-none mb-5 mt-2 d-flex flex-column align-items-center">
         <i className="fa-solid fa-house-signal fa-2x text-body"> </i>
         <span className="textologo_sidebar text-body">SMART HOME</span>
       </a>
@@ -50,17 +61,18 @@ function Sidebar({ hasRooms }) {
         <li className="nav-item mb-4">
           <Link
             to="/"
-            className="nav-link link-dark p-0 d-flex flex-column align-items-center"
+            className="nav-link text-body p-0 d-flex flex-column align-items-center"
           >
             <i className="fa-solid fa-house fs-4 mb-1 text-body"></i>
             <span className="texto_sidebar text-body">HOME</span>
           </Link>
         </li>
+        {/* Link "Rooms" aparece só quando há pelo menos um cômodo criado */}
         {hasRooms && (
           <li className="nav-item">
             <Link
               to="/rooms"
-              className="nav-link link-dark p-0 d-flex flex-column align-items-center"
+              className="nav-link text-body p-0 d-flex flex-column align-items-center"
             >
               <i className="fa-solid fa-cubes fs-4 mb-1 text-body"></i>
               <span className="texto_sidebar text-body">ROOMS</span>
@@ -70,7 +82,7 @@ function Sidebar({ hasRooms }) {
       </ul>
 
       <div className="mt-auto mb-4">
-        <Link to="/config" className="link-dark text-decoration-none">
+        <Link to="/config" className="text-decoration-none">
           <i className="fa-solid fa-gear fs-4 text-body"></i>
         </Link>
       </div>
@@ -78,26 +90,39 @@ function Sidebar({ hasRooms }) {
   );
 }
 
-function TelaHomeReal({ setHasRooms, comodos, setComodos }) {
-  const [isCriando, setIsCriando] = useState(false);
+// ─── Tela Home ────────────────────────────────────────────────────────────────
 
-  const handleAdicionarComodo = (novoComodo) => {
+interface TelaHomeRealProps {
+  setHasRooms: (value: boolean) => void;
+  comodos: Comodo[];
+  setComodos: (comodos: Comodo[]) => void;
+}
+
+function TelaHomeReal({
+  setHasRooms,
+  comodos,
+  setComodos,
+}: TelaHomeRealProps): JSX.Element {
+  const [isCriando, setIsCriando] = useState<boolean>(false);
+
+  const handleAdicionarComodo = (novoComodo: Comodo): void => {
     const novaListaDeComodos = [...comodos, novoComodo];
     setComodos(novaListaDeComodos);
     setIsCriando(false);
 
+    // Libera o link "Rooms" na sidebar assim que o primeiro cômodo é criado
     if (novaListaDeComodos.length > 0) {
       setHasRooms(true);
     }
   };
 
-  const handleScanRede = () => alert("Iniciando escaneamento de rede...");
+  const handleScanRede = (): void => alert("Iniciando escaneamento de rede...");
 
   return (
     <div className="tela_principal">
       <ParteSuperior />
 
-      {/* O painel oculta-se quando o cartão de criação é aberto */}
+      {/* Painel de ações oculto enquanto o formulário de criação está aberto */}
       {!isCriando && (
         <PainelCriacao
           onAbrirCriacao={() => setIsCriando(true)}
@@ -117,13 +142,19 @@ function TelaHomeReal({ setHasRooms, comodos, setComodos }) {
   );
 }
 
-function TelaRoomsReal({ comodos }) {
+// ─── Tela Rooms ───────────────────────────────────────────────────────────────
+
+interface TelaRoomsRealProps {
+  comodos: Comodo[];
+}
+
+function TelaRoomsReal({ comodos }: TelaRoomsRealProps): JSX.Element {
   return (
     <div className="p-4 text-body">
-      <h3 className="mb-4 fw-bold text-center">Meus Cómodos</h3>
+      <h3 className="mb-4 fw-bold text-center">Meus Cômodos</h3>
       <div className="d-flex flex-wrap justify-content-center gap-4">
         {comodos.length === 0 ? (
-          <p className="text-muted">Nenhum cómodo criado ainda.</p>
+          <p className="text-muted">Nenhum cômodo criado ainda.</p>
         ) : (
           comodos.map((comodo, index) => (
             <CardComodo key={index} comodo={comodo} />
@@ -134,9 +165,11 @@ function TelaRoomsReal({ comodos }) {
   );
 }
 
-function TelaPerfil() {
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [perfil, setPerfil] = React.useState({
+// ─── Tela Perfil ──────────────────────────────────────────────────────────────
+
+function TelaPerfil(): JSX.Element {
+  const [isEditing, setIsEditing] = React.useState<boolean>(false);
+  const [perfil, setPerfil] = React.useState<Perfil>({
     nome: "João Vitor",
     bio: "Estudante de Análise e Desenvolvimento de Sistemas - UniFECAF",
     email: "joao.vitor@email.com",
@@ -145,8 +178,9 @@ function TelaPerfil() {
     habilidades: "Python, FastAPI, PostgreSQL e React",
   });
 
-  const handleMudanca = (evento) => {
-    const campo = evento.target.name;
+  // Campo atualizado dinamicamente pelo atributo `name` do input
+  const handleMudanca = (evento: React.ChangeEvent<HTMLInputElement>): void => {
+    const campo = evento.target.name as keyof Perfil;
     const valor = evento.target.value;
     setPerfil({ ...perfil, [campo]: valor });
   };
@@ -154,18 +188,19 @@ function TelaPerfil() {
   return (
     <div className="d-flex justify-content-center mt-5">
       <div className="card shadow-sm" style={{ width: "24rem" }}>
-        <div className="card-body text-center">
+        <div className="card-body text-center text-body">
           <img
             src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
             className="rounded-circle mb-3"
             style={{ width: "120px", height: "120px", objectFit: "cover" }}
             alt="Foto de Perfil"
           />
+          {/* Cada campo alterna entre <span> (leitura) e <input> (edição) */}
           {isEditing ? (
             <input
               type="text"
               name="nome"
-              className="form-control mb-2 text-center fw-bold"
+              className="form-control mb-2 text-center fw-bold text-body bg-transparent"
               value={perfil.nome}
               onChange={handleMudanca}
             />
@@ -176,7 +211,7 @@ function TelaPerfil() {
             <input
               type="text"
               name="bio"
-              className="form-control mb-4 text-center"
+              className="form-control mb-4 text-center text-body bg-transparent"
               value={perfil.bio}
               onChange={handleMudanca}
             />
@@ -185,13 +220,13 @@ function TelaPerfil() {
           )}
 
           <ul className="list-group list-group-flush text-start">
-            <li className="list-group-item d-flex align-items-center">
+            <li className="list-group-item d-flex align-items-center bg-transparent text-body">
               <i className="fa-solid fa-envelope text-secondary me-3"></i>
               {isEditing ? (
                 <input
                   type="email"
                   name="email"
-                  className="form-control form-control-sm"
+                  className="form-control form-control-sm text-body bg-transparent"
                   value={perfil.email}
                   onChange={handleMudanca}
                 />
@@ -199,13 +234,13 @@ function TelaPerfil() {
                 <span>{perfil.email}</span>
               )}
             </li>
-            <li className="list-group-item d-flex align-items-center">
+            <li className="list-group-item d-flex align-items-center bg-transparent text-body">
               <i className="fa-solid fa-phone text-secondary me-3"></i>
               {isEditing ? (
                 <input
                   type="text"
                   name="telefone"
-                  className="form-control form-control-sm"
+                  className="form-control form-control-sm text-body bg-transparent"
                   value={perfil.telefone}
                   onChange={handleMudanca}
                 />
@@ -213,13 +248,13 @@ function TelaPerfil() {
                 <span>{perfil.telefone}</span>
               )}
             </li>
-            <li className="list-group-item d-flex align-items-center">
+            <li className="list-group-item d-flex align-items-center bg-transparent text-body">
               <i className="fa-solid fa-briefcase text-secondary me-3"></i>
               {isEditing ? (
                 <input
                   type="text"
                   name="experiencia"
-                  className="form-control form-control-sm"
+                  className="form-control form-control-sm text-body bg-transparent"
                   value={perfil.experiencia}
                   onChange={handleMudanca}
                 />
@@ -227,13 +262,13 @@ function TelaPerfil() {
                 <span>{perfil.experiencia}</span>
               )}
             </li>
-            <li className="list-group-item d-flex align-items-center">
+            <li className="list-group-item d-flex align-items-center bg-transparent text-body">
               <i className="fa-solid fa-code text-secondary me-3"></i>
               {isEditing ? (
                 <input
                   type="text"
                   name="habilidades"
-                  className="form-control form-control-sm"
+                  className="form-control form-control-sm text-body bg-transparent"
                   value={perfil.habilidades}
                   onChange={handleMudanca}
                 />
@@ -255,20 +290,30 @@ function TelaPerfil() {
   );
 }
 
-function TelaConfiguracao() {
-  const [config, setConfig] = React.useState({
+// ─── Tela Configurações ───────────────────────────────────────────────────────
+
+function TelaConfiguracao(): JSX.Element {
+  const [config, setConfig] = React.useState<Configuracao>({
     nomeCasa: "Minha Smart Home",
     notificacoes: true,
     idioma: "pt-BR",
   });
 
-  const handleMudanca = (evento) => {
-    const { name, value, type, checked } = evento.target;
-    setConfig({ ...config, [name]: type === "checkbox" ? checked : value });
+  const handleMudanca = (
+    evento: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ): void => {
+    const { name, value } = evento.target;
+
+    // Checkbox usa `checked` em vez de `value`
+    if (evento.target instanceof HTMLInputElement && evento.target.type === "checkbox") {
+      setConfig({ ...config, [name]: evento.target.checked });
+    } else {
+      setConfig({ ...config, [name]: value });
+    }
   };
 
   return (
-    <div className="d-flex justify-content-center mt-5">
+    <div className="d-flex justify-content-center mt-5 text-body">
       <div className="card shadow-sm" style={{ width: "40rem" }}>
         <div className="card-header bg-transparent pb-0 border-bottom-0 mt-2">
           <h4 className="fw-bold">
@@ -285,7 +330,7 @@ function TelaConfiguracao() {
             </label>
             <input
               type="text"
-              className="form-control"
+              className="form-control text-body bg-transparent"
               name="nomeCasa"
               value={config.nomeCasa}
               onChange={handleMudanca}
@@ -299,7 +344,7 @@ function TelaConfiguracao() {
               IDIOMA DA INTERFACE
             </label>
             <select
-              className="form-select"
+              className="form-select text-body bg-transparent"
               name="idioma"
               value={config.idioma}
               onChange={handleMudanca}
@@ -341,9 +386,11 @@ function TelaConfiguracao() {
   );
 }
 
-export default function App() {
-  const [hasRooms, setHasRooms] = useState(false);
-  const [comodos, setComodos] = useState([]);
+// ─── App (raiz) ───────────────────────────────────────────────────────────────
+
+export default function App(): JSX.Element {
+  const [hasRooms, setHasRooms] = useState<boolean>(false);
+  const [comodos, setComodos] = useState<Comodo[]>([]);
 
   return (
     <BrowserRouter>

@@ -1,4 +1,4 @@
-function ParteSuperior() {
+function ParteSuperior(): JSX.Element {
   return <div className="parte_superior"></div>;
 }
 
